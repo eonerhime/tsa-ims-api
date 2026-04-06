@@ -18,7 +18,7 @@ router.post("/createUser", authorizeRoles("admin"), createUser);
 router.post("/login", login);
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUser);
-router.put("/users/:id", updateUser);
+router.put("/users/:id", authorizeRoles("admin"), updateUser);
 router.delete("/users/:id", authorizeRoles("admin"), deleteUser);
 
 module.exports = router;
