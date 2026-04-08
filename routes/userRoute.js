@@ -26,13 +26,13 @@ const generalLimiter = rateLimit({
 router.use(protect);
 
 // 1. Static/Specific Routes
-router.get("/users", getAllUsers);
+router.get("/", getAllUsers);
 router.post("/login", generalLimiter, login);
-router.post("/users/new", authorizeRoles("admin"), createUser);
+router.post("/new", authorizeRoles("admin"), createUser);
 
 // 2. Dynamic/ID Routes
-router.get("/users/:id", getUser);
-router.put("/users/:id", authorizeRoles("admin"), updateUser);
-router.delete("/users/:id", authorizeRoles("admin"), deleteUser);
+router.get("/:id", getUser);
+router.put("/:id", authorizeRoles("admin"), updateUser);
+router.delete("/:id", authorizeRoles("admin"), deleteUser);
 
 module.exports = router;

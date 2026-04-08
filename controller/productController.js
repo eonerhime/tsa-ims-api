@@ -1,14 +1,20 @@
 const Product = require("../models/productModel");
 const cloudinary = require("../config/cloudinaryConfig");
+const sendEmail = require("../middleware/emailSender");
+const User = require("../models/userModel");
+const newProductTemplate = require("../util/newProductEmail");
 
 /*
-  {
-    "name": "Samsung Fold 3",
-    "description": "Fairly used but in good conditions",
-    "price": 1200,
-    "quantity": 2
-  }
+{
+  "name": "Samsung Galaxy Fold 3",
+  "description": "Samsung Galaxy Z Fold 3 - 512GB ROM - 12GB RAM - 5g - 4400mAh",
+  "price": 1200,
+  "quantity": 15,
+  "imageUrl": "https://res.cloudinary.com/dgyu3a3xa/image/upload/v1775636316/InventoryFolder/promojsfm7hhwl1dx6bj.jpg",
+  "cloudinaryId": "InventoryFolder/promojsfm7hhwl1dx6bj",
+}
 */
+
 // Create a new product
 const createProduct = async (req, res) => {
   try {
@@ -29,14 +35,36 @@ const createProduct = async (req, res) => {
     }
 
     const product = await Product.create({
-      name: req.body.name,
-      description: req.body.description,
+      name: req?.body?.name,
+      description: req?.body?.description,
       price: price,
       quantity: quantity,
       imageUrl: imageUrl,
       cloudinaryId: publicId,
     });
-    res.status(201).json(product);
+
+    // Get all admins
+    const admins = await User.find({ role: "admin" });
+    const adminEmails = admins.map((a) => a.email);
+
+    // Send email
+    const subject = `Inventory Update: ${product.name} added`;
+    const html = newProductTemplate(product);
+
+    // Only attempt to send if the array isn't empty
+    if (adminEmails.length > 0) {
+      try {
+        // We pass the array, the sender function handles the rest
+        await sendEmail(adminEmails, subject, html);
+      } catch (emailError) {
+        console.error("Email failed, but product was created:", emailError);
+        // We don't want to crash the whole request if just the email fails
+      }
+    }
+    res.status(201).json({
+      message: "Product created and admins notified",
+      product,
+    });
   } catch (error) {
     // 4. Log the actual error for debugging, return a clean message to user
     console.error("Upload Error:", error);

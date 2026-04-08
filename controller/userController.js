@@ -1,17 +1,18 @@
 const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const loginNotificationTemplate = require("../util/loginNotificaiton");
+const sendEmail = require("../middleware/emailSender");
 
 /*
   {
     "name": "John Doe",
-    "email": "john.doe@example.com",
+    "email": "emo.onerhime@gmail.com",
     "password": "asdf123",
     "role": "admin",
     "phone": "2348022223333"
     "_id": "69d5f35bcb85d89c8739595b",
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVmMzViY2I4NWQ4OWM4NzM5NTk1YiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3NTYyOTU5OCwiZXhwIjoxNzc1NzE1OTk4fQ.YtpOLBXRNxHKKGvv16m8ZETt-OU0yrCkC2T5ydMN15E",
-  },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVmMzViY2I4NWQ4OWM4NzM5NTk1YiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3NTY2OTQ0NywiZXhwIjoxNzc1NzU1ODQ3fQ.EbTHamoQI0B0smgdx_aXDFc2PmK0PmO0G_Ip04ud8F4  },
   {
     "name": "Jane Doe",
     "email": "jane.doe@example.com",
@@ -27,7 +28,17 @@ const jwt = require("jsonwebtoken");
     "phone": "234802223335",
     "_id": "69d5f49217d42e8558ded0df",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVmNDkyMTdkNDJlODU1OGRlZDBkZiIsInJvbGUiOiJzYWxlc3BlcnNvbiIsImlhdCI6MTc3NTYyOTU2MSwiZXhwIjoxNzc1NzE1OTYxfQ.vXh6SPKEfCwLz8niWxxVWKO83tfyqCY6-1P2nfDKVwQ",
-  }
+  },
+  {
+  "_id": {
+    "$oid": "69d5f641a517c79a2d8d9895"
+  },
+  "name": "Miss Doe",
+  "email": "emoakpo.onerhime@gmail.com",
+  "role": "admin",
+  "phone": "234802223336",
+  
+}
 */
 // Create user
 const createUser = async (req, res) => {
@@ -113,6 +124,22 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1d" },
     );
+
+    console.log("User details:", user);
+
+    // --- Send Login Notification Email ---
+    // We use a try/catch here so that if the email fails,
+    // the user isn't blocked from logging in.
+    try {
+      const subject = "Security Alert: New Login Detected";
+      const emailHtml = loginNotificationTemplate(user, subject);
+
+      // Since user.email is a string, your updated sendEmail
+      // (with the Array.isArray check) will handle it perfectly.
+      await sendEmail(user.email, subject, emailHtml);
+    } catch (emailError) {
+      console.error("Login notification email failed:", emailError.message);
+    }
 
     res.json({
       message: "Login successful",
