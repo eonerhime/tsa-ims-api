@@ -13,8 +13,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api", productRoute);
 app.use("/api", userRoute);
+app.use("/api/products", productRoute);
 
 // Connect to MongoDB
 connectDB().then(() => {

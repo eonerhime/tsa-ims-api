@@ -14,6 +14,18 @@ const productSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    quantity: {
+      type: Number,
+      default: 0,
+    },
+    imageUrl: {
+      type: String,
+      required: true,
+    },
+    cloudinaryId: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true },
 );

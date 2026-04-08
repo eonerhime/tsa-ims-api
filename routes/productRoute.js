@@ -9,14 +9,28 @@ const {
 } = require("../controller/productController");
 const protect = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/roleMiddleware");
+const upload = require("../middleware/cloudinary");
 
 // protect route
 router.use(protect);
 
-router.post("/products", authorizeRoles("admin"), createProduct);
-router.get("/products", getAllProducts);
-router.get("/products/:id", getProduct);
-router.put("/products/:id", authorizeRoles("admin"), updateProduct);
-router.delete("/products/:id", authorizeRoles("admin"), deleteProduct);
+// 1. Static/Specific Routes
+router.get("/", getAllProducts);
+router.post(
+  "/new",
+  upload.single("imageUrl"),
+  authorizeRoles("admin"),
+  createProduct,
+);
+
+// 2. Dynamic/ID Routes
+router.get("/:id", getProduct);
+router.put(
+  "/:id",
+  upload.single("imageUrl"),
+  authorizeRoles("admin"),
+  updateProduct,
+);
+router.delete("/:id", authorizeRoles("admin"), deleteProduct);
 
 module.exports = router;

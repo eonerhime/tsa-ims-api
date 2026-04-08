@@ -2,6 +2,33 @@ const User = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+/*
+  {
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "asdf123",
+    "role": "admin",
+    "phone": "2348022223333"
+    "_id": "69d5f35bcb85d89c8739595b",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVmMzViY2I4NWQ4OWM4NzM5NTk1YiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3NTYyOTU5OCwiZXhwIjoxNzc1NzE1OTk4fQ.YtpOLBXRNxHKKGvv16m8ZETt-OU0yrCkC2T5ydMN15E",
+  },
+  {
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com",
+    "role": "storekeeper",
+    "phone": "234802223334",
+    "_id": "69d5f43ff73f8dbaf4d7a1dc",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVmNDNmZjczZjhkYmFmNGQ3YTFkYyIsInJvbGUiOiJzdG9yZWtlZXBlciIsImlhdCI6MTc3NTYyOTYxNywiZXhwIjoxNzc1NzE2MDE3fQ.hvmLNiTIG1VAUWY-PMGWAlUrzwPDmGfcyrZBP6rg3UQ",
+  },
+  {
+    "name": "Kid Doe",
+    "email": "kid.doe@example.com",
+    "role": "salesperson",
+    "phone": "234802223335",
+    "_id": "69d5f49217d42e8558ded0df",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZDVmNDkyMTdkNDJlODU1OGRlZDBkZiIsInJvbGUiOiJzYWxlc3BlcnNvbiIsImlhdCI6MTc3NTYyOTU2MSwiZXhwIjoxNzc1NzE1OTYxfQ.vXh6SPKEfCwLz8niWxxVWKO83tfyqCY6-1P2nfDKVwQ",
+  }
+*/
 // Create user
 const createUser = async (req, res) => {
   try {
